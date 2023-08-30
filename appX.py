@@ -1,6 +1,7 @@
-import streamlit as st              # pip install streamlit
-from streamlit_option_menu import option_menu  # pip install streamlit-option-menu
+import streamlit as st              
+import base64
 
+from streamlit_option_menu import option_menu  # pip install streamlit-option-menu
 from PIL import Image
 
 # -------------- SETTINGS --------------
@@ -26,14 +27,21 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 # --- NAVIGATION MENU ---
 selected = option_menu(
     menu_title=None,
-    options=["Dati di calcolo", "Visualizzazione"],
+    options=["Parametri iniziali", "Sollecitazioni", "Visualizzazione"],
     icons=["pencil-fill", "calculator-fill"],  # https://icons.getbootstrap.com/
     orientation="horizontal",
 )
 
 # --- INPUT  ---
-if selected == "Dati di calcolo":
-    st.header(f"Inserimento dati")
+if selected == "Parametri iniziali":
+    sApplicazione = st.selectbox('Applicazione', ('Stradale', 'Ferroviario', 'Guado'))
+    sTipologiaDiStruttura = st.selectbox('Tipologia di Struttura', ('Circolare', 'Ellittica', 'Tre raggi di Curvatura'))
+    sTipologiaDimateriale = st.selectbox('Tipologia di materiale (fy)', ('Acciaio S235JR', 'Acciaio S275JR'))
+    sOndulazione = st.selectbox('Ondulazione',('T100','T200','T350'))
+    sSpessoreLamiera = st.selectbox('Spessore Lamiera', ('3 mm', '4 mm', '6 mm'))
+
+if selected == "Sollecitazioni":
+    st.header(f"Sollecitazioni")
     sTesto = """
     - Applicazioni stradali-autostradali in cui il ricoprimento minimo e 1/6 o 1/8 della luce della struttura (di norma
       si suggerisce di adottare a livello cautelativo e di prima approssimazione un cover minimo 1/6 della luce)
@@ -46,12 +54,16 @@ if selected == "Dati di calcolo":
         with col1:
             nLuceMax = st.number_input('Luce massima (m)', value = 0.10, min_value=0.10, step=0.10, max_value=7.70)
             nLL = st.number_input('Live Load',value=0.0)
+            nRicoprimentoTerreno = st.number_input('Ricoprimento Terreno (m)',value=0.0)
+            nRicoprimentoAsfaltoCLS = st.number_input('Ricoprimento Asfalto/CLS (m)',value=0.0)
+            nDensitaTerreno = st.number_input('Densità terreno (kN/m3)',value=0.0)
+            nDensitaAsfaltoCLS = st.number_input('Densità Asfalto/CLS (kN/m3)',value=0.0)
              
         with col2:
             image = Image.open('fig2.png')
             st.image(image, caption='Diagramma dei fattori di riduzione legati alla Densità Proctor (DP)')
-            sDL = st.selectbox('% compattazione suolo', ('85', '90', '95'))
-
+            sDL = st.selectbox('Compattazione terreno (%)', ('85', '90', '95'))
+    
         submitted = st.form_submit_button("Conferma dati")
         if submitted:
             nk = 1
@@ -66,12 +78,17 @@ if selected == "Dati di calcolo":
             nPv = nK * (float(sDL) + nLL)
             st.write(nk)
             st.write(nPv)
-
+            
+            nCarichiMorti = nRicoprimentoTerreno * nDensitaTerreno + nRicoprimentoAsfaltoCLS * nDensitaAsfaltoCLS
+            st.write("Carichi morti {0} ".format( nCarichiMorti) )
 
 # --- Visualizzazione dati ---
 if selected == "Visualizzazione":
     st.header("Visualizzazione Dati")
-    with st.form("Display_data"):
-        submitted = st.form_submit_button("Display")
-        if submitted:
-            st.success("Dati visualizzati")
+    # st.markdown("<embed src="strutture autoportanti in acciaio corrugato.pdf" width="400" height="400">", unsafe_allow_html=True)
+    pdf2view = "strutture autoportanti in acciaio corrugato.pdf"
+    with open(pdf2view,"rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+        pdf_display = "f'<embed src=”data:application/pdf;base64,{base64_pdf}” width=”700″ height=”1000″ type=”application/pdf”>’"
+        
+    st.markdown(pdf_display, unsafe_allow_html=True)
