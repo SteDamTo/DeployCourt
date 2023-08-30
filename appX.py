@@ -45,7 +45,7 @@ authenticator = stauth.Authenticate(names, usernames, hashed_passwords,
 
 name, authentication_status, username = authenticator.login("Login", "main")
 
-st.toast(authentication_status, icon='😍')
+st.write(authentication_status)
 
 if authentication_status == False:
     st.error("Username/password is incorrect")
