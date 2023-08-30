@@ -1,6 +1,8 @@
 import streamlit as st              # pip install streamlit
 from streamlit_option_menu import option_menu  # pip install streamlit-option-menu
 
+from PIL import Image
+
 # -------------- SETTINGS --------------
 
 page_title = "Calcolo livello di compressione con metodo AISI"
@@ -43,10 +45,12 @@ if selected == "Dati di calcolo":
         
         with col1:
             nLuceMax = st.number_input('Luce massima (m)', value = 0.10, min_value=0.10, step=0.10, max_value=7.70)
-            sDL = st.selectbox('% compattazione', ('85', '90', '95'))
+            nLL = st.number_input('Live Load',value=0.0)
              
         with col2:
-            nLL = st.number_input('Live Load',value=0.0)
+            image = Image.open('fig2.png')
+            st.image(image, caption='Diagramma dei fattori di riduzione legati alla Densità Proctor (DP)')
+            sDL = st.selectbox('% compattazione suolo', ('85', '90', '95'))
 
         submitted = st.form_submit_button("Conferma dati")
         if submitted:
