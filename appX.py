@@ -157,11 +157,12 @@ if authentication_status:
                 st.write("Compressione Anello = {0} kN/m".format( nCompressioneAnello) )
 
                 if nAreaSezione / nAreaLineare > 1:
-                    st.success('Struttura verificata', icon="✅")
+                    # st.success('Struttura verificata', icon="✅")
+                    st.success('Struttura verificata')
                     st.snow()
                 else:
-                     st.warning('Struttura NON verificata', icon="⚠️")
-                     
+                    # st.warning('Struttura NON verificata', icon="⚠️")
+                    st.warning('Struttura NON verificata')
                 st.write("Resistenza {0} N/mm2".format(nAreaSezione / nAreaLineare))
 
     # --- Visualizzazione dati ---
