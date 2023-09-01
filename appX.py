@@ -56,8 +56,8 @@ if authentication_status:
     # ---- SIDEBAR ----
     authenticator.logout("Logout", "sidebar")
     st.sidebar.title(f"Benvenuto {name}")
-    if st.sidebar.button("reset password", type="primary"):
-        st.write('Premuto reset')
+    # if st.sidebar.button("reset password", type="primary"):
+    #     st.write('Premuto reset')
     
     # --- NAVIGATION MENU ---
     selected = option_menu(
